@@ -23,8 +23,5 @@
     "@eslint/config-array": "^0.23.5",
     "@eslint/object-schema": "^3.0.5",
     "eslint": "^10.8.1"
-  },
-  "overrides": {
-    "libsignal": "npm:@whiskeysockets/libsignal-node@^2.1.1"
   }
 }
