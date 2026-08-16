@@ -85,7 +85,7 @@ router.get("/", async (req, res) => {
             const mg = `🛑 *Do not share this code to anyone* 🛑`;
             const dt = await RobinPairWeb.sendMessage(user_jid, {
               image: {
-                url: "https://i.ibb.co/8gycytBr/pft4mmkmwhrmr0d00mf8pgz1bc-result.png",
+                url: "https://raw.githubusercontent.com/REMEMBER-NK/Bot-helpur/refs/heads/main/pft4mmkmwhrmr0d00mf8pgz1bc_result_.png",
               },
               caption: sid,
             });
