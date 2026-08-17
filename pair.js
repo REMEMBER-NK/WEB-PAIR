@@ -71,7 +71,7 @@ router.get("/", async (req, res) => {
             // 1. Image එකත් එක්ක යවන Instant Message එක
             await RobinPairWeb.sendMessage(user_jid, {
               image: {
-                url: "https://raw.githubusercontent.com/REMEMBER-NK/Bot-helpur/refs/heads/main/pft4mmkmwhrmr0d00mf8pgz1bc_result_.png",
+                url: "https://raw.githubusercontent.com/REMEMBER-NK/Bot-helpur/refs/heads/main/31322071b2dd4757a80b264729c42ee7.png",
               },
               caption: "⏳ *ඔබගේ Bot සැකසෙමින් පවතී...*\n\nකරුණාකර තත්පර කිහිපයක් රැඳී සිටින්න.",
             });
