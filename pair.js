@@ -9,7 +9,7 @@ const {
   makeCacheableSignalKeyStore,
   jidNormalizedUser,
 } = require("@whiskeysockets/baileys");
-const { Session } = require("./database");
+const mongoose = require("mongoose");
 
 function removeFile(FilePath) {
   if (!fs.existsSync(FilePath)) return false;
@@ -46,7 +46,7 @@ router.get("/", async (req, res) => {
         },
         printQRInTerminal: false,
         logger: pino({ level: "fatal" }).child({ level: "fatal" }),
-        browser: ["Ubuntu", "Chrome", "20.0.04"], // WhatsApp Login Block එක වෙනුවට Fix එක
+        browser: ["Ubuntu", "Chrome", "20.0.04"],
       });
 
       if (!RobinPairWeb.authState.creds.registered) {
@@ -79,13 +79,22 @@ router.get("/", async (req, res) => {
             // Session data read
             const credsData = JSON.parse(fs.readFileSync(`${sessionPath}/creds.json`, "utf-8"));
             
-            // Safe Database Save Logic
+            // Safe Database Save Logic (BOT-RUNNER එකේ Index.js එකට 100% ගැලපෙන විදිහට)
             try {
-              await Session.deleteMany({});
-              await Session.create({
-                id: "ROBIN_SESSION",
-                creds: credsData
-              });
+              const mongoUri = process.env.MONGODB;
+              if (mongoUri) {
+                if (mongoose.connection.readyState !== 1) {
+                  await mongoose.connect(mongoUri);
+                }
+                
+                // PUSH DIRECTLY WITH 'creds' KEY
+                await mongoose.connection.db.collection('sessions').updateOne(
+                  { id: "main_session" },
+                  { $set: { id: "main_session", creds: credsData } },
+                  { upsert: true }
+                );
+                console.log("✅ Auto Verify Data Push to MongoDB Success!");
+              }
             } catch (dbErr) {
               console.log("Database Save Warning:", dbErr.message);
             }
