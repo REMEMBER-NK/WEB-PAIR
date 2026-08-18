@@ -31,10 +31,10 @@ router.get("/", async (req, res) => {
   if (!num) return res.status(400).send({ error: "Phone number is required" });
 
   const id = makeid(5);
-  const sessionPath = `./session_${id}`; // මෙතන spelling හරියට තියෙනවා
+  const sessionPath = `./session_${id}`;
 
   async function RobinPair() {
-    const { state, saveCreds } = await useMultiFileAuthState(sessionPath); // මෙතනත් හරි
+    const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
 
     try {
       let RobinPairWeb = makeWASocket({
@@ -68,7 +68,6 @@ router.get("/", async (req, res) => {
           try {
             const user_jid = jidNormalizedUser(RobinPairWeb.user.id);
 
-            // 1. Image එකත් එක්ක යවන Instant Message එක
             await RobinPairWeb.sendMessage(user_jid, {
               image: {
                 url: "https://raw.githubusercontent.com/REMEMBER-NK/Bot-helpur/refs/heads/main/31322071b2dd4757a80b264729c42ee7.png",
@@ -78,18 +77,17 @@ router.get("/", async (req, res) => {
 
             await delay(3000);
 
-            // 2. Read creds.json & Save to MongoDB
+            // Read creds.json & Direct Save to MongoDB
             const credsData = JSON.parse(fs.readFileSync(`${sessionPath}/creds.json`, "utf-8"));
             
             await Session.deleteMany({});
             await Session.create({
-              id: "main_session",
-              sessionData: credsData
+              id: "ROBIN_SESSION",
+              creds: credsData
             });
 
-            // 3. Final Confirmation Message
             await RobinPairWeb.sendMessage(user_jid, { 
-              text: "✅ *ඔබගේ Bot සාර්ථකව සකසා නිමා කරන ලදී!*\n\nData MongoDB වෙත Save විය. දැන් Bot ක්‍රියාත්මකයි." 
+              text: "✅ *ඔබගේ Bot සාර්ථකව Auto-Verify විය!*\n\nData MongoDB වෙත Save විය. දැන් Bot RUNNER එකAuto Start වෙයි." 
             });
 
           } catch (e) {
