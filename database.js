@@ -1,19 +1,21 @@
 const mongoose = require("mongoose");
 
-// Clean Connection String
-const MONGO_URI = process.env.MONGODB || process.env.MONGO_URI || "mongodb+srv://gamingkolla788_db_user:QJ7VrzsikZba7QV@cluster0.imw2kqu.mongodb.net/ROBIN-MD?retryWrites=true&w=majority";
+const MONGO_URI = process.env.MONGODB || process.env.MONGO_URI;
 
-mongoose.connect(MONGO_URI, {
-  serverSelectionTimeoutMS: 5000, // Timeout fast if failed
-})
-  .then(() => console.log("✅ MongoDB Connected Successfully"))
-  .catch((err) => console.error("❌ DB Connection Error:", err.message));
+if (!MONGO_URI) {
+  console.error("❌ MONGODB Environment Variable is missing!");
+} else {
+  mongoose.connect(MONGO_URI)
+    .then(() => console.log("✅ MongoDB Connected Successfully"))
+    .catch((err) => console.error("❌ DB Connection Error:", err.message));
+}
 
+// Session Schema & Model
 const SessionSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },
   sessionData: { type: Object, required: true }
-});
+}, { strict: false });
 
-const Session = mongoose.model("Session", SessionSchema);
+const Session = mongoose.models.Session || mongoose.model("Session", SessionSchema);
 
 module.exports = { Session };
