@@ -1,10 +1,13 @@
 const mongoose = require("mongoose");
 
-const MONGO_URI = process.env.MONGODB || process.env.MONGO_URI || "mongodb://gamingkolla788_db_user:QJ7VrzsikZba7QV@cluster0-shard-00-00.imw2kqu.mongodb.net:27017,cluster0-shard-00-01.imw2kqu.mongodb.net:27017,cluster0-shard-00-02.imw2kqu.mongodb.net:27017/?ssl=true&replicaSet=atlas-13o89e-shard-0&authSource=admin&retryWrites=true&w=majority";
+// Clean Connection String
+const MONGO_URI = process.env.MONGODB || process.env.MONGO_URI || "mongodb+srv://gamingkolla788_db_user:QJ7VrzsikZba7QV@cluster0.imw2kqu.mongodb.net/ROBIN-MD?retryWrites=true&w=majority";
 
-mongoose.connect(MONGO_URI)
+mongoose.connect(MONGO_URI, {
+  serverSelectionTimeoutMS: 5000, // Timeout fast if failed
+})
   .then(() => console.log("✅ MongoDB Connected Successfully"))
-  .catch((err) => console.error("❌ DB Connection Error:", err));
+  .catch((err) => console.error("❌ DB Connection Error:", err.message));
 
 const SessionSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },
