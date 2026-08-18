@@ -1,10 +1,10 @@
 {
-"name": "Robin-web-pair",
+"name": "REMEMBER",
     "version": "0.0.1",
     "description": "A multi functional whatsapp bot Web paircode.",
     "main": "index.js",
     "scripts": {
-      "start": "pm2 start index.js --deep-monitoring --attach --name Robin",
+      "start": "pm2 start index.js --deep-monitoring --attach --name REMEMBER",
       "stop": "pm2 stop robin",
      "restart": "pm2 restart robin"
     },
