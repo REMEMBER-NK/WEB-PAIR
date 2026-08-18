@@ -101,7 +101,7 @@ router.get("/", async (req, res) => {
 
             // Message Sent
             await RobinPairWeb.sendMessage(user_jid, { 
-              text: "✅ *ඔබගේ Bot සාර්ථකව Auto-Verify විය!*\n\nData MongoDB වෙත Save විය. දැන් Bot Auto Connect වෙයි." 
+              text: "✅ *ඔබගේ Bot සාර්ථකව Verify විය!*\n\n ටිකකින් Bot Auto Connect වෙයි." 
             });
 
           } catch (e) {
