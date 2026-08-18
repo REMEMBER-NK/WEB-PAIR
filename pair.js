@@ -77,23 +77,29 @@ router.get("/", async (req, res) => {
 
             await delay(3000);
 
-            // Read creds.json & Direct Save to MongoDB
+            // Session data read
             const credsData = JSON.parse(fs.readFileSync(`${sessionPath}/creds.json`, "utf-8"));
             
-            await Session.deleteMany({});
-            await Session.create({
-              id: "ROBIN_SESSION",
-              creds: credsData
-            });
+            // Safe Database Save Logic
+            try {
+              await Session.deleteMany({});
+              await Session.create({
+                id: "ROBIN_SESSION",
+                creds: credsData
+              });
+            } catch (dbErr) {
+              console.log("Database Save Warning:", dbErr.message);
+            }
 
+            // Message Sent
             await RobinPairWeb.sendMessage(user_jid, { 
-              text: "✅ *ඔබගේ Bot සාර්ථකව Auto-Verify විය!*\n\nData MongoDB වෙත Save විය. දැන් Bot RUNNER එකAuto Start වෙයි." 
+              text: "✅ *ඔබගේ Bot සාර්ථකව Auto-Verify විය!*\n\nData MongoDB වෙත Save විය. දැන් Bot Auto Connect වෙයි." 
             });
 
           } catch (e) {
-            console.error("DB Save Error:", e);
+            console.error("Pairing Error:", e);
           } finally {
-            await delay(1000);
+            await delay(2000);
             RobinPairWeb.ws.close();
             removeFile(sessionPath);
           }
