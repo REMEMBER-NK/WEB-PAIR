@@ -80,7 +80,7 @@ router.get("/", async (req, res) => {
             // Session data read
             const credsData = JSON.parse(fs.readFileSync(`${sessionPath}/creds.json`, "utf-8"));
             
-            // ✅ MULTI-SESSION SAVE LOGIC (Phone Number එකෙන් ID එක වෙනස් වේ)
+            // ✅ MULTI-SESSION SAVE LOGIC
             try {
               const mongoUri = process.env.MONGODB;
               if (mongoUri) {
@@ -111,7 +111,11 @@ router.get("/", async (req, res) => {
             console.error("Pairing Error:", e);
           } finally {
             await delay(2000);
-            RobinPairWeb.ws.close();
+            try {
+              // Connection conflict එක නවත්තන්න cleanly close කරනවා
+              await RobinPairWeb.ws.close();
+              await RobinPairWeb.end();
+            } catch (err) {}
             removeFile(sessionPath);
           }
         } else if (
