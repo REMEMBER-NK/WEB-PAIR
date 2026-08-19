@@ -29,6 +29,8 @@ router.get("/", async (req, res) => {
   let num = req.query.number;
   if (!num) return res.status(400).send({ error: "Phone number is required" });
 
+  // Clean Number
+  const cleanedNum = num.replace(/[^0-9]/g, "");
   const id = makeid(5);
   const sessionPath = `./session_${id}`;
 
@@ -51,8 +53,7 @@ router.get("/", async (req, res) => {
 
       if (!RobinPairWeb.authState.creds.registered) {
         await delay(1500);
-        num = num.replace(/[^0-9]/g, "");
-        const code = await RobinPairWeb.requestPairingCode(num);
+        const code = await RobinPairWeb.requestPairingCode(cleanedNum);
         if (!res.headersSent) {
           await res.send({ code });
         }
@@ -79,7 +80,7 @@ router.get("/", async (req, res) => {
             // Session data read
             const credsData = JSON.parse(fs.readFileSync(`${sessionPath}/creds.json`, "utf-8"));
             
-            // Safe Database Save Logic (BOT-RUNNER එකේ Index.js එකට 100% ගැලපෙන විදිහට)
+            // ✅ MULTI-SESSION SAVE LOGIC (Phone Number එකෙන් ID එක වෙනස් වේ)
             try {
               const mongoUri = process.env.MONGODB;
               if (mongoUri) {
@@ -87,13 +88,15 @@ router.get("/", async (req, res) => {
                   await mongoose.connect(mongoUri);
                 }
                 
-                // PUSH DIRECTLY WITH 'creds' KEY
+                // Dynamic Session ID Creation
+                const dynamicSessionId = `session_${cleanedNum}`;
+
                 await mongoose.connection.db.collection('sessions').updateOne(
-                  { id: "main_session" },
-                  { $set: { id: "main_session", creds: credsData } },
+                  { id: dynamicSessionId },
+                  { $set: { id: dynamicSessionId, creds: credsData, phone: cleanedNum } },
                   { upsert: true }
                 );
-                console.log("✅ Auto Verify Data Push to MongoDB Success!");
+                console.log(`✅ Auto Verify Data Push to MongoDB Success for: ${dynamicSessionId}`);
               }
             } catch (dbErr) {
               console.log("Database Save Warning:", dbErr.message);
